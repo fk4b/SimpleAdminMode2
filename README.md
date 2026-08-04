@@ -2,6 +2,9 @@
 
 Mindustry Java admin mod for tracking, bans, history and related tools.
 
+**This is NOT PickMeAnime and NOT Logic GIF Animator.**  
+Those are separate mods in sibling folders.
+
 **Display name:** SimpleAdminMode  
 **Internal name:** sam-java-mod  
 **Author:** FD  
@@ -31,16 +34,10 @@ gradlew jar
 
 Desktop jar: `build/libs/SimpleAdminMode2Desktop.jar`
 
-Full multiplatform (needs Android SDK):
-
-```bat
-gradlew deploy
-```
-
 ## Structure
 
 ```
-src/fallen/           Java sources
+src/fallen/           Java sources (admin only)
 assets/bundles/       EN / RU bundles
 assets/sprites/       icons
 mod.hjson             mod metadata
