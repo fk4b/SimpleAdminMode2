@@ -14,7 +14,7 @@ main: "fallen.SimpleAdminMode"
 description: "Mod for easier tracking and banning. Crash fix (FOO Events), freeze-stable history, ban evidence log, auto /rollback after ban, mobile-friendly UI."
 
 #the mod version
-version: 1.82
+version: 1.83
 
 #the minimum game build required to run this mod
 minGameVersion: 155

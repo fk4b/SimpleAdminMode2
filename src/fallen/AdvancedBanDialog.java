@@ -37,7 +37,8 @@ public class AdvancedBanDialog extends BaseDialog {
         this.addCloseButton();
 
         cont.table(top -> {
-            top.add("[lightgray]UUID: [accent]" + uuid).padRight(20f);
+            // Same ID as in player list (from /trace) — used for /ban and /rollback
+            top.add("[lightgray]ID: [accent]" + uuid).padRight(20f);
             top.table(st -> {
                 ButtonGroup sg = new ButtonGroup();
                 st.button("HERE", Styles.togglet, () -> this.currentScope = "here")
@@ -258,22 +259,26 @@ public class AdvancedBanDialog extends BaseDialog {
         Vars.player.sendMessage("[gray][Sent]: [white]" + cmd);
         BanKickMessages.ban(loxName);
 
-        // Resolve player entity id for evidence log and optional /rollback
-        int pid = resolvePlayerId();
+        // Entity id only for local evidence matching (builds/breaks/chat).
+        int pid = resolveEntityId();
 
         // Write last-minute evidence (builds / breaks / chat) into one shared log file
         try {
             BanEvidenceLogger.writeOnBan(pid, loxName, uuid, time, reason);
         } catch (Throwable ignored) {}
 
-        // After ban: send /rollback <id> with delay (toggle in settings)
-        scheduleRollback(pid);
+        // /rollback must use the same ID the mod shows (trace ID / short ID),
+        // NOT Mindustry entity player.id — servers expect the displayed ID.
+        scheduleRollback(uuid);
 
         hide();
     }
 
-    /** Prefer tracked history id (works offline); fall back to live Groups match by uuid. */
-    private int resolvePlayerId() {
+    /**
+     * Local entity id for evidence log matching only.
+     * Prefer history entry with matching displayed ID; fall back to live player.
+     */
+    private int resolveEntityId() {
         if (uuid != null) {
             for (PlayerData pd : SimpleAdminMode.playerHistory.values()) {
                 if (pd != null && uuid.equals(pd.uuid) && pd.id > 0) {
@@ -282,7 +287,13 @@ public class AdvancedBanDialog extends BaseDialog {
             }
             try {
                 for (Player p : mindustry.gen.Groups.player) {
-                    if (p != null && p.uuid() != null && uuid.equals(p.uuid())) {
+                    if (p == null) continue;
+                    // Match by displayed/trace id first, then by connection uuid as fallback
+                    PlayerData pd = SimpleAdminMode.playerHistory.get(p.id);
+                    if (pd != null && uuid.equals(pd.uuid)) {
+                        return p.id;
+                    }
+                    if (p.uuid() != null && uuid.equals(p.uuid())) {
                         return p.id;
                     }
                 }
@@ -292,16 +303,17 @@ public class AdvancedBanDialog extends BaseDialog {
     }
 
     /**
-     * If enabled, after 2 seconds write/send {@code /rollback <playerId>} so builds of the banned
-     * player are rolled back without typing the command manually.
+     * If enabled, after 2 seconds send {@code /rollback <id>} where {@code id} is the
+     * ID shown in the admin list (from /trace), not the internal entity id.
      */
-    private void scheduleRollback(int playerId) {
+    private void scheduleRollback(String banId) {
         if (!Core.settings.getBool("sam-ban-rollback", true)) return;
-        if (playerId <= 0) {
+        if (banId == null || banId.isEmpty()
+            || banId.equals("Loading...") || banId.equals("none") || banId.equals("admin?")) {
             Vars.ui.showInfoFade(Core.bundle.get("sam.settings.rollback.noId"));
             return;
         }
-        final int id = playerId;
+        final String id = banId;
         Timer.schedule(() -> {
             try {
                 String rcmd = "/rollback " + id;

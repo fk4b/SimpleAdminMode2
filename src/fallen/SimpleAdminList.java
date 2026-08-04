@@ -236,10 +236,11 @@ public class SimpleAdminList {
                 // ── Info row (UUID / lang / stats) — no action buttons here ──
                 body.table(infoTable -> {
                     infoTable.left().defaults().height(28.0f).pad(1.0f);
+                    // Shown value is server trace ID (often short ID, not raw UUID)
                     String uuidText = user.uuid.equals("admin?") ? "[green]admin"
                         : (user.uuid.equals("Loading...") ? "[gray]waiting..."
                         : (user.uuid.equals("none") ? "[gray]none" : user.uuid));
-                    infoTable.add((CharSequence) ("[accent]UUID: [white]" + uuidText)).growX().left().wrap();
+                    infoTable.add((CharSequence) ("[accent]ID: [white]" + uuidText)).growX().left().wrap();
                     if (Core.settings.getBool("sam-fastlang", false)) {
                         infoTable.add((CharSequence) ("[accent] L: [white]" + user.locale)).right().padLeft(4f);
                     }
@@ -278,7 +279,7 @@ public class SimpleAdminList {
                         if (!user.uuid.equals("Loading...") && !user.uuid.equals("none") && !user.uuid.equals("admin?")) {
                             Call.sendChatMessage("/freeze " + user.uuid);
                         } else {
-                            Vars.ui.showInfoFade("[red]UUID ещё не получен");
+                            Vars.ui.showInfoFade("[red]ID ещё не получен");
                         }
                     }).tooltip(Core.bundle.get("sam.list.freeze"));
                 } else {
@@ -293,7 +294,7 @@ public class SimpleAdminList {
                         p.name = user.name;
                         new AdvancedBanDialog(p, user.uuid).show();
                     } else {
-                        Vars.ui.showInfoFade("[red]UUID ещё не получен");
+                        Vars.ui.showInfoFade("[red]ID ещё не получен");
                     }
                 }).tooltip(Core.bundle.get("sam.list.ban"));
             }).top().right().padLeft(6f);
