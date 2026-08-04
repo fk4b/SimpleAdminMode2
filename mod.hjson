@@ -1,23 +1,25 @@
 #the mod name as displayed in-game
-displayName: "Java Mod Template"
+displayName: "SimpleAdminMode"
 
 #the internal name of your mod
-name: "example-java-mod"
+name: "sam-java-mod"
 
 #your name
-author: "You"
+author: "FD"
 
 #the fully qualified main class of the mod
-main: "example.ExampleJavaMod"
+main: "fallen.SimpleAdminMode"
 
 #the mod description as seen in the mod dialog
-description: "A Mindustry Java mod template."
+description: "Mod for easier tracking and banning. Crash fix (FOO Events), freeze-stable history, ban evidence log, auto /rollback after ban, mobile-friendly UI."
 
 #the mod version
-version: 1.0
+version: 1.82
 
 #the minimum game build required to run this mod
-minGameVersion: 158
+minGameVersion: 155
 
 #this is a java mod
 java: true
+
+hidden: true
