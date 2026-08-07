@@ -265,10 +265,10 @@ public class AntiAttemPatcher {
             // lower-id admin has AA off. isPlayerFrozen check above covers the common case.
             markHandled(dataUuid);
             Call.sendChatMessage(Core.bundle.format("sam.aa.freeze-mes", dataName, dataUuid, tileX, tileY));
-            // Auto-freeze uses "/freeze true <id>". Panel freeze still uses "/freeze <id>".
-            Call.sendChatMessage("/freeze true " + dataUuid);
+            // Auto-freeze uses "/freeze <id> true". Panel freeze still uses "/freeze <id>".
+            Call.sendChatMessage("/freeze " + dataUuid + " true");
             if (playerData != null) playerData.autoFrozen = true;
-            Log.info("AntiAttemPatcher: sent /freeze true @", dataUuid);
+            Log.info("AntiAttemPatcher: sent /freeze @ true", dataUuid);
         }, delay);
     }
 
